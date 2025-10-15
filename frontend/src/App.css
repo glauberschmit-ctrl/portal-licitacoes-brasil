@@ -2,41 +2,40 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
+}
+
+/* ------------------------------------------- */
+/* NOSSOS ESTILOS PERSONALIZADOS PARA O PORTAL */
+/* ------------------------------------------- */
+
+.App {
+  /* Centraliza o cabeçalho principal do nosso App */
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* A caixa que segura nossas duas colunas */
+.layout-container {
+  display: flex; /* A mágica que coloca as coisas lado a lado */
+  gap: 1.5rem; /* Um espaço elegante entre as colunas */
+  padding: 1rem;
+  text-align: left; /* Alinha o texto dentro das colunas à esquerda, que é mais natural para leitura */
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* A coluna do conteúdo principal (mais larga) */
+.main-content {
+  flex: 3; /* Ocupa 3 partes do espaço */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* A nossa nova barra lateral (mais estreita) */
+.sidebar {
+  flex: 1; /* Ocupa 1 parte do espaço */
+  background-color: #f4f7fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e1e8ed;
 }
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+/* Um pequeno ajuste no título da sidebar */
+.sidebar h2 {
+  margin-top: 0;
 }

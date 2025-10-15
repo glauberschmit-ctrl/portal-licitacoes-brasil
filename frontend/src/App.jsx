@@ -1,12 +1,24 @@
-import React from 'react'
-import ResultadosBusca from './pages/ResultadosBusca'
-
 function App() {
   return (
     <div className="App">
-      <ResultadosBusca />
+      <header>
+        <h1>Portal Licitações Brasil (PLB)</h1>
+      </header>
+      
+      {/* Esta é a parte crucial */}
+      <div className="layout-container">
+        
+        <aside className="sidebar">
+          <h2>Filtros</h2>
+          <p>(Aqui ficarão os filtros da busca)</p>
+        </aside>
+
+        <main className="main-content">
+          <ResultadosBusca />
+        </main>
+
+      </div>
+      
     </div>
   )
 }
-
-export default App
