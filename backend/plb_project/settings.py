@@ -76,3 +76,29 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# D:\portal-licitacoes-brasil\backend\plb_project\settings.py
+
+# ... (Todo o código anterior)
+
+# Configuração para o Heroku e WhiteNoise
+# O WhiteNoise é usado para servir arquivos estáticos de forma eficiente
+# IMPORTANTE: Descomente (remova a #) APENAS quando for fazer o deploy
+if 'DYNO' in os.environ:
+    # Use Whitenoise para servir arquivos estáticos em produção
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+
+    # Configuração para que o Django saiba onde procurar arquivos estáticos
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATIC_URL = '/static/'
+    
+    # Esta linha é a correção principal do erro 'ImproperlyConfigured':
+    # Diz ao Django/WhiteNoise para comprimir os arquivos estáticos para melhor performance.
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    
+    # Configuração de segurança (necessária para HTTPS no Heroku)
+    SECURE_SSL_REDIRECT = True
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000 # 1 ano
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
