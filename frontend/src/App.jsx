@@ -1,3 +1,7 @@
+import React from 'react'
+import ResultadosBusca from './pages/ResultadosBusca'
+import './App.css'
+
 function App() {
   return (
     <div className="App">
@@ -5,7 +9,6 @@ function App() {
         <h1>Portal Licitações Brasil (PLB)</h1>
       </header>
       
-      {/* Esta é a parte crucial */}
       <div className="layout-container">
         
         <aside className="sidebar">
@@ -22,3 +25,5 @@ function App() {
     </div>
   )
 }
+
+export default App
