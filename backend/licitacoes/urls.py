@@ -1,10 +1,8 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+# backend/licitacoes/urls.py
+from django.urls import path
 from .views import LicitacaoViewSet
 
-router = DefaultRouter()
-router.register(r'', LicitacaoViewSet, basename='licitacao') 
-
+# Note: as_view({'get': 'list'}) usa a action 'list' da ViewSet
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', LicitacaoViewSet.as_view({'get': 'list'}), name='licitacoes-list'),
 ]
