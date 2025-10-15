@@ -1,12 +1,10 @@
-from django.urls import path
-from django.http import HttpResponse
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import LicitacaoViewSet
 
-# Função de teste simples para verificar o roteamento.
-# Esta função não usa sua views.py, eliminando qualquer erro lá.
-def test_view(request):
-    return HttpResponse("ROTA OK", status=200)
+router = DefaultRouter()
+router.register(r'licitacoes', LicitacaoViewSet, basename='licitacao') 
 
 urlpatterns = [
-    # Tenta mapear a rota 'licitacoes/' para a função de teste.
-    path('licitacoes/', test_view, name='test_licitacoes'),
+    path('', include(router.urls)),
 ]
