@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import LicitacaoViewSet
 
 router = DefaultRouter()
-router.register(r'licitacoes', LicitacaoViewSet, basename='licitacao') 
+router.register(r'', LicitacaoViewSet, basename='licitacao') 
 
 urlpatterns = [
     path('', include(router.urls)),
