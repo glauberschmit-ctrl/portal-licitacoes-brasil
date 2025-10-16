@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import Licitacao  # A classe do seu modelo
 
-# Register your models here.
+# Comando de Registro
+admin.site.register(Licitacao)

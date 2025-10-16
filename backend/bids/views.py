@@ -1,19 +1,21 @@
-from rest_framework import generics
+from django.db.models import Q
+from rest_framework.response import Response # <--- A CORREÇÃO ESTÁ AQUI
+from rest_framework import viewsets
 from .models import Licitacao
 from .serializers import LicitacaoSerializer
 
-class LicitacaoListView(generics.ListAPIView):
+class LicitacaoViewSet(viewsets.ViewSet):
     serializer_class = LicitacaoSerializer
 
-    def get_queryset(self):
+    def list(self, request):
         queryset = Licitacao.objects.all().order_by('-data_abertura')
-        estado = self.request.query_params.get('estado')
-        if estado:
-            queryset = queryset.filter(estado__iexact=estado)
-        modalidade = self.request.query_params.get('modalidade')
-        if modalidade:
-            queryset = queryset.filter(modalidade__icontains=modalidade)
-        keyword = self.request.query_params.get('keyword')
-        if keyword:
-            queryset = queryset.filter(objeto__icontains=keyword)
-        return queryset
+        search_term = self.request.query_params.get('q', None)
+
+        if search_term:
+            queryset = queryset.filter(
+                Q(titulo__icontains=search_term) |
+                Q(objeto__icontains=search_term)
+            )
+        
+        serializer = LicitacaoSerializer(queryset, many=True)
+        return Response(serializer.data)
