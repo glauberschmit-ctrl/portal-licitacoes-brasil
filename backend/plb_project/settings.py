@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'licitacoes', 
     'bids',
     'rest_framework',
+    'django_filters',
     'corsheaders',
 ]
 
@@ -103,3 +104,7 @@ if 'DYNO' in os.environ:
     SECURE_HSTS_SECONDS = 31536000 # 1 ano
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+    
+    REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    }

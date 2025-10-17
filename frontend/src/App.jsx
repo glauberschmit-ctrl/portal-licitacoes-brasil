@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { fetchLicitacoes } from './services/api';
-import ResultadosBusca from './pages/ResultadosBusca.jsx'; 
-import FiltroBusca from './components/FiltroBusca.jsx';   
-import Header from './components/Header.jsx';             
-import Footer from './components/Footer.jsx';            
-import GlobalStyles from './styles/GlobalStyles.jsx';  
-import styled from 'styled-components';
+// Importação da função de API (que montará a URL com os filtros)
+import { fetchLicitacoes } from './services/api.js'; 
 
+// ATENÇÃO: Verifique se ResultadosBusca.jsx usa 'export default' no final.
+import ResultadosBusca from "./pages/ResultadosBusca.jsx"; 
+
+import FiltroBusca from "./components/FiltroBusca.jsx"; 
+import Header from './components/Header.jsx'; 
+import Footer from './components/Footer.jsx'; 
+import GlobalStyles from './styles/GlobalStyles.jsx'; 
+import styled from 'styled-components';
 
 const MainLayout = styled.div`
   display: flex;
@@ -15,7 +18,6 @@ const MainLayout = styled.div`
 `;
 
 const ContentWrapper = styled.div`
-  display: flex;
   flex: 1;
   padding: 1.5rem;
   max-width: 1200px;
@@ -23,76 +25,193 @@ const ContentWrapper = styled.div`
   margin: 0 auto;
 `;
 
-const Sidebar = styled.aside`
-  flex: 0 0 300px; // Largura da sidebar
-  padding: 1rem;
-  margin-right: 1.5rem;
-  background-color: #f7f7f7;
+// Container que imita o layout da busca principal
+const SearchContainer = styled.div`
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  background-color: #f8f8f8; 
+`;
 
-  h2 {
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    color: #003366;
+const QuickSearchRow = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+`;
+
+const InputBusca = styled.input`
+  flex-grow: 1;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  background-color: white; 
+`;
+
+const BotaoBusca = styled.button`
+  /* Cor Laranja proeminente */
+  background-color: #ff7f41; 
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:hover {
+    background-color: #e66f36;
   }
+`;
+
+const AdvancedFilterToggle = styled.button`
+    background: none;
+    border: none;
+    color: #004c99; /* Azul escuro para link */
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 1rem;
+    font-weight: 500;
+
+    &:hover {
+        text-decoration: underline;
+    }
 `;
 
 const MainContent = styled.main`
   flex: 1;
 `;
 
+
 function App() {
   const [licitacoes, setLicitacoes] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null);
   
-  // Função central para buscar os dados, agora no App.jsx
-  const buscarLicitacoes = (filtros) => {
-    setLoading(true);
+  // Estado que armazena todos os filtros aplicados, incluindo o termoBusca
+  const [filtrosAplicados, setFiltrosAplicados] = useState({
+      termoBusca: '', 
+      estado: '', 
+      modalidade: '', 
+      cidade: ''
+  });
+
+  // Estado que controla se a caixa de filtros avançados está aberta/visível
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+
+  // Estado para o input de busca rápida
+  const [quickSearchTerm, setQuickSearchTerm] = useState('');
+
+
+  // Função central que faz a busca na API
+  const buscarLicitacoes = async (filtros) => {
+    setLoading(true); 
     setError(null);
-    fetchLicitacoes(filtros)
-      .then(response => {
-        setLicitacoes(response.data);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError('Falha ao buscar licitações.');
-        setLoading(false);
-        console.error(err);
-      });
+    try {
+      setFiltrosAplicados(filtros); 
+      const dados = await fetchLicitacoes(filtros); 
+      setLicitacoes(dados); 
+    
+    } catch (err) {
+      setError('Falha ao buscar licitações. Verifique o servidor Django.');
+      setLicitacoes([]); 
+      console.error("Erro de busca capturado no App:", err);
+    
+    } finally {
+      setLoading(false); 
+    }
   };
 
-  // Função para ser passada ao FiltroBusca (o garçom)
-  const handleBusca = (termoBusca) => {
-    buscarLicitacoes({ q: termoBusca }); // 'q' é o nome do nosso filtro de palavra-chave
+  // Função executada ao usar o botão grande "Pesquisar"
+  const handleQuickSearch = (e) => {
+    e.preventDefault();
+    
+    const novosFiltros = { 
+        ...filtrosAplicados, 
+        termoBusca: quickSearchTerm 
+    };
+    
+    buscarLicitacoes(novosFiltros);
+    setShowAdvancedFilters(false); 
+  };
+  
+  // Função executada ao usar o botão "Aplicar Filtros" do menu embutido
+  const handleAdvancedSearch = (filtrosCompletos) => {
+    // Sincroniza o input de busca rápida com o termo que veio dos filtros avançados
+    setQuickSearchTerm(filtrosCompletos.termoBusca || ''); 
+    buscarLicitacoes(filtrosCompletos);
+    setShowAdvancedFilters(false);
   };
 
-  // Carrega os resultados iniciais quando a página abre pela primeira vez
+  // Carrega os resultados iniciais
   useEffect(() => {
-    buscarLicitacoes({}); // Busca inicial sem filtros
-  }, []);
+    buscarLicitacoes({}); 
+  }, []); 
+  
+  // Sincroniza quickSearchTerm quando filtrosAplicados muda
+  useEffect(() => {
+      setQuickSearchTerm(filtrosAplicados.termoBusca || '');
+  }, [filtrosAplicados.termoBusca]);
+
 
   return (
     <MainLayout>
       <GlobalStyles />
       <Header />
       <ContentWrapper>
-        {/* 1. O FiltroBusca (Garçom) na Sidebar */}
-        <Sidebar>
-          <h2>Filtros</h2>
-          {/* Conectamos o filtro à nova função handleBusca */}
-          <FiltroBusca onBuscar={handleBusca} />
-        </Sidebar>
-
-        {/* 2. O ResultadosBusca (Chefe) no MainContent */}
         <MainContent>
-          {/* Passamos o estado e os dados para ResultadosBusca */}
-          <ResultadosBusca 
-            licitacoes={licitacoes} 
-            loading={loading} 
-            error={error} 
-          />
+            
+            {/* Container da Busca Principal e Filtros Avançados (MENU EMBUTIDO) */}
+            <SearchContainer>
+                
+                <QuickSearchRow as="form" onSubmit={handleQuickSearch}>
+                    <InputBusca
+                        type="text"
+                        placeholder="Digite o que você quer vender hoje"
+                        value={quickSearchTerm}
+                        onChange={(e) => setQuickSearchTerm(e.target.value)}
+                    />
+                    <BotaoBusca type="submit">
+                        <i className="fa-solid fa-magnifying-glass"></i> Pesquisar
+                    </BotaoBusca>
+                    
+                    {/* Botão de Toggle para Filtros Avançados */}
+                    <AdvancedFilterToggle 
+                        type="button" 
+                        onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                    >
+                        <i className="fa-solid fa-sliders"></i>
+                        {showAdvancedFilters ? 'Ocultar Filtros' : 'Filtros de pesquisa'}
+                    </AdvancedFilterToggle>
+                </QuickSearchRow>
+
+                {/* O FiltroBusca é renderizado condicionalmente */}
+                {showAdvancedFilters && (
+                    <FiltroBusca 
+                        onBuscar={handleAdvancedSearch}
+                        initialFiltros={filtrosAplicados}
+                    />
+                )}
+            </SearchContainer>
+
+            {/* Resultados da Busca */}
+            <ResultadosBusca 
+                licitacoes={licitacoes} 
+                loading={loading} 
+                error={error} 
+            />
         </MainContent>
       </ContentWrapper>
       <Footer />
