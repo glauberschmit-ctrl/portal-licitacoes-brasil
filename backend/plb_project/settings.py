@@ -108,3 +108,5 @@ if 'DYNO' in os.environ:
     REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
     }
+    # Adicione um comentário no final para forçar a alteração:
+# Deploy fix 17/10
