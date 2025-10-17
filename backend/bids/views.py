@@ -1,22 +1,22 @@
-# backend/bids/views.py
-
 from rest_framework import viewsets
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Licitacao
 from .serializers import LicitacaoSerializer
 
-class LicitacaoViewSet(viewsets.ReadOnlyModelViewSet):
-    # A consulta base
-    queryset = Licitacao.objects.all()
+class LicitacaoViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint que permite que licitações sejam visualizadas ou editadas.
+    O ModelViewSet já cria rotas para LIST (GET /api/licitacoes/) e DETAIL (GET /api/licitacoes/{id}/).
+    """
+    queryset = Licitacao.objects.all().order_by('-data_abertura')
     serializer_class = LicitacaoSerializer
     
-    # Adicionamos ambos os filtros
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter] 
+    # Filtros para busca
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     
-    # 1. Filtro por campos exatos (DjangoFilterBackend)
-    # ESSENCIAL: Adicionamos 'cidade' aqui
-    filterset_fields = ['estado', 'modalidade', 'cidade'] 
+    # Campos que podem ser filtrados via query params (e.g., ?estado=SC&cidade=XAXIM)
+    filterset_fields = ['estado', 'cidade', 'modalidade'] 
     
-    # 2. Busca por texto livre (SearchFilter, usa o parâmetro 'search')
-    search_fields = ['titulo', 'orgao', 'objeto', 'cidade']
+    # Campos que o SearchFilter vai procurar (e.g., ?search=consultoria)
+    search_fields = ['titulo', 'objeto', 'orgao'] 
