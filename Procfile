@@ -1,1 +1,1 @@
-web: gunicorn plb_project.wsgi --log-file - --bind 0.0.0.0:$PORT
+web: gunicorn --chdir backend plb_project.wsgi --log-file - --bind 0.0.0.0:$PORT
