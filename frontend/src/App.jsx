@@ -8,7 +8,7 @@ import ResultadosBusca from "./pages/ResultadosBusca.jsx";
 import FiltroBusca from "./components/FiltroBusca.jsx"; 
 import Header from './components/Header.jsx'; 
 import Footer from './components/Footer.jsx'; 
-import GlobalStyles from './Styles/GlobalStyles.jsx'; 
+import GlobalStyles from './temp_styles/GlobalStyles.jsx'; 
 import styled from 'styled-components';
 
 const MainLayout = styled.div`
