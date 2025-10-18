@@ -13,7 +13,9 @@ SECRET_KEY = 'sua-chave-secreta-aqui'
 
 # Variável de Debug, será desativada no Heroku mais abaixo
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 
+    'localhost', 
+    'plb-backend-plb-2025-05094050e6cd.herokuapp.com',]
 ROOT_URLCONF = 'plb_project.urls' 
 WSGI_APPLICATION = 'plb_project.wsgi.application'
 
@@ -75,3 +77,4 @@ CORS_ALLOW_ALL_ORIGINS = True
 LANGUAGE_CODE = 'pt-br' 
 TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
+STATIC_URL = 'static/'
